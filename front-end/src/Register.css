@@ -1,0 +1,44 @@
+h2 {
+  color:  #00aced;
+  text-align:center;
+}
+h5{
+  text-align: left;
+}
+.logbox {
+    padding: 10px;
+    margin: 10px auto;
+    width: 340px;
+    border: 1px solid #c2d6d6 ;
+}
+
+.form
+{
+  display:inline-block;
+  vertical-align: middle;
+  line-height: 14px;
+  padding: 20px;
+  vertical-align:middle;
+}
+.errFontStyle{
+  color: red;
+  text-align:left;
+}
+@media screen and (max-width: 1200px){
+  .logbox{
+    margin: 2% auto;
+   }
+}
+
+@media screen and (max-width: 992px){
+  .logbox{
+    margin: 2% auto;
+    width: 300px;
+   }
+}
+
+@media screen and (max-width: 768px){
+  .logbox{
+    margin: 2% auto;
+   }
+}

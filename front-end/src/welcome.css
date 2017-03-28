@@ -1,0 +1,114 @@
+.container{
+  width: 100%
+}
+.center{
+   margin-left: 250px;
+}
+.right {
+    margin-left: 80px;
+}
+.profile-usermenu {
+  margin-top: 30px;
+}
+
+.profile-usermenu ul li {
+  border-bottom: 1px solid #f0f4f7;
+}
+
+.profile-usermenu ul li:last-child {
+  border-bottom: none;
+}
+
+.profile-usermenu ul li a {
+
+  font-size: 14px;
+  font-weight: 400;
+  color: #00aced;
+}
+
+.profile-usermenu ul li a i {
+  margin-right: 8px;
+  font-size: 14px;
+  color: #00aced;
+}
+
+
+.profile-usermenu ul li a:hover {
+
+  color: #5b9bd1;
+}
+
+.profile-usermenu ul li.active {
+  border-bottom: none;
+}
+.status-upload {
+background: #f5f5f5;
+border-radius: 4px;
+width: 100%;
+margin-left: 0px;
+align-content: center;
+}
+.status-upload form {
+width: 100%;
+align-content: center;
+}
+.status-upload form textarea {
+background: #fff;
+border: medium none;
+font-family: sans-serif;
+font-size: 14px;
+height: 142px;
+letter-spacing: 0.3px;
+padding: 20px;
+width: 100%;
+resize:vertical;
+outline:none;
+border: 1px solid #F2F2F2;
+}
+
+.status-upload ul > li {
+float: left;
+}
+.block-update-card {
+  height: 100%;
+  border: 1px #FFFFFF solid;
+  width: 50%;
+  float: left;
+  margin-top: 0;
+  padding: 0;
+  box-shadow: 1px 1px 8px #d8d8d8;
+  background-color: #FFFFFF;
+}
+
+.block-update-card .update-card-body {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+.block-update-card .update-card-body h4 {
+  color: #737373;
+  font-weight: bold;
+  font-size: 13px;
+}
+.block-update-card .update-card-body p {
+  margin-top: 20px;
+  color: #737373;
+  font-size: 12px;
+}
+
+.block-update-card .card-action-pellet div {
+  margin-right: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #dddddd;
+}
+.media-object {
+    display: block;
+    margin-left: 12px;
+}
+.img-circle {
+    border: 1px solid gainsboro;
+    border-radius: 50%;
+}
+.h5{
+  text-align: center;
+}

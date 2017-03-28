@@ -1,0 +1,19 @@
+h2 {
+  color:  #00aced;
+  text-align:center;
+}
+.form
+{
+  color: #00aced;
+  display:inline-block;
+  vertical-align: middle;
+  line-height: 14px;
+  padding: 20px;
+  vertical-align:middle;
+}
+.logbox {
+    padding: 10px;
+    margin: 10px auto;
+    width: 340px;
+    border: 1px solid #c2d6d6 ;
+}

@@ -1,0 +1,10 @@
+.navbar-default .navbar-nav>li>a {
+    color: #00aced;
+}
+
+.logo {
+  margin-top: 5px;
+  margin-left: 15px;
+  height:40px;
+  width:40px;
+}

@@ -1,0 +1,129 @@
+/ - get
+/login-get
+/register-get
+
+
+/login-post
+ {
+  email:"parita@improwised.com",
+  password:"asas"
+ }
+
+/register-post
+{
+  username:"parita",
+  mobileNo:"9909970574",
+  email:"parita@improwised.com"
+  password:"Asas"
+  avtar:"./profiles/avtar.jpg"
+}
+
+
+/profilepictureupload - get
+{
+  username:"parita",
+  mobileNo:"9909970574",
+  email:"parita@improwised.com",
+  avtar:"./profiles/avtar.jpg",
+}
+
+
+/editprofile - post
+{
+  username:"parita",
+  mobileNo:"9909970574",
+  email:"parita@improwised.com",
+  password:"asas"
+}
+
+/profilepictureupload - post
+{
+  avtar:"./profiles/avtar.jpg",
+}
+
+/profilechange - get
+{
+
+  count:5,
+
+  tweets: {
+           [ tweet:"tweet" ]
+          },
+
+  users: {
+            id:1,
+            user_id:1,
+            username="username",
+            follower_id=1,
+            avtar="avtar",
+          },
+
+  results: {
+            user_id=1,
+            username="parita"
+           },
+}
+
+/welcome - get
+{
+            count:5,
+            follow:{
+            [
+                    name:"parita",
+                    avtar:"avtar",
+            ]},
+            results:{
+                    username:"ParitaBhuva",
+                    userid:2,
+            },
+            tweets:{
+              ["tweets"]
+            },
+
+
+}
+
+/deletetweet/:id - delete
+{
+  id=2,
+}
+
+/tweet-post
+{
+  userid:3,
+  tweet:"tweet",
+  timeStamp:"11-12-1994",
+}
+
+/followers-get
+{
+  count: 10,
+  users: {[
+        username:"parita",
+        avatar:"avatar",
+  ]},
+  results:{
+        username:"ParitaBhuva",
+        userid:2,
+  },
+}
+
+/profile/:id-get
+{
+  id:2,
+  name:"hemangi",
+  tweets:{
+          ["tweets"]
+  },
+  email:hemangi@improwised.com,
+}
+
+/logout-post
+{
+  session:id,
+}
+
+/unfollow -post
+{
+  followerid:4,
+}
