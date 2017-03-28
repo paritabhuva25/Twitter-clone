@@ -36,7 +36,6 @@ nbproject
 .CVS
 .idea
 .tmp
-.env
 node_modules
 postgres_data
 
