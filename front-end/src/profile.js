@@ -16,6 +16,7 @@ class Profile extends Component{
     this.onunfollow = this.onunfollow.bind(this);
     this.onHomeClick = this.onHomeClick.bind(this);
     this.onfollowerCLick = this.onfollowerCLick.bind(this);
+    this.onEditClick = this.onEditClick.bind(this);
   }
 
   componentWillMount() {
@@ -49,7 +50,7 @@ class Profile extends Component{
   }
   onunfollow(id) {
     axios.post('http://localhost:8000/unfollow', {
-      data : this.state,
+      data : this.props.params.Id,
       followerId: id,
     })
     .then(function (response) {
@@ -76,6 +77,15 @@ class Profile extends Component{
     let userId = this.props.params.Id
       if(userId)
         browserHistory.push("/user/" +userId)
+      else
+        browserHistory.push("/login")
+    e.preventDefault(e);
+  }
+  onEditClick(e) {
+
+    let userId = this.props.params.Id
+      if(userId)
+        browserHistory.push("/editprofile/" +userId)
       else
         browserHistory.push("/login")
     e.preventDefault(e);
@@ -224,6 +234,11 @@ class Profile extends Component{
                 <li>
                   <a onClick={this.onHomeClick}>
                     <i className="glyphicon glyphicon-home"> home</i>
+                  </a>
+                </li>
+                <li>
+                  <a onClick={this.onEditClick}>
+                    <i className="glyphicon glyphicon-pencil"> Edit profile</i>
                   </a>
                 </li>
                 <li>

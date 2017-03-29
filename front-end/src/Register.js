@@ -66,7 +66,7 @@ class Register extends Component{
     }
     if(status){
     axios.post('http://localhost:8000/register', {
-      userdata: this.state,
+       data: this.state,
     })
 
     .then(function (response) {
