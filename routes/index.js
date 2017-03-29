@@ -105,10 +105,6 @@ router.post('/login', (req, res, next) => {
     }
   });
 });
-router.get('/', (req, res) => {
-  res.render('index');
-});
-
 
 router.post('/register', upload.single('profile'), (req, res, next) => {
   const username = req.body.data.username;
