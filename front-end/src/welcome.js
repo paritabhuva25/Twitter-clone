@@ -13,7 +13,6 @@ class welcome extends Component{
       tweet : '',
       imagetweet : '',
       data:'',
-      twitted:false,
       tweetrequired:'',
     }
     this.onFieldChange = this.onFieldChange.bind(this);
@@ -39,7 +38,7 @@ class welcome extends Component{
   }
   onfollow(id) {
     axios.post('http://localhost:8000/follower', {
-      data : this.state,
+      data : this.props.params.Id,
       followerId: id,
     })
     .then(function (response) {
@@ -80,7 +79,9 @@ onfollowerCLick(e){
     else if(status)
     {
       axios.post('http://localhost:8000/tweet', {
-        data : this.state,
+        tweet :this.state.tweet,
+        imagetweet :this.state.imagetweet,
+        userId :this.props.params.Id,
       })
       .then(function (response) {
         location.reload();

@@ -6,7 +6,6 @@ import axios from 'axios';
 import { HelpBlock } from 'react-bootstrap';
 
 class Login extends Component{
-
   constructor(props) {
     super(props);
     this.state={
@@ -27,51 +26,49 @@ class Login extends Component{
       passwordrequirederrors :'',
     });
     let status = true;
+
     if(this.state.email === '') {
+      console.log("before:", status);
       this.setState({usernamerequirederrors: '*Required'});
       status = false;
     }
+
     if(this.state.password ==='') {
       this.setState({passwordrequirederrors: '*Required'})
       status = false;
     }
-    if(status){
-    axios.post('http://localhost:8000/login', {
-    userdata: this.state,
-    })
-  .then(function (response) {
 
-    cookie.save(response.data.userId, response.data.userId, { path: '/' });
-    if (response.data.userId) {
-      browserHistory.push("/user/" + response.data.userId)
+    if(status) {
+      axios.post('http://localhost:8000/login', {
+        data: this.state,
+      })
+      .then(function (response) {
+        cookie.save(response.data.userId, response.data.userId, { path: '/' });
+        if (response.data.userId) {
+          browserHistory.push("/user/" + response.data.userId)
+        } else {
+          browserHistory.push("/login")
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     } else {
-        browserHistory.push("/login")
+      browserHistory.push("/login")
     }
-  })
-  .catch(function (error) {
-
-  });
     e.preventDefault(e);
-    this.setState({
-      showComponent: true,
-    });
   }
-  else{
-    browserHistory.push("/login")
-  }
-}
-  onFieldChange(event){
 
+  onFieldChange(event){
     this.setState({
       [ event.target.name]: event.target.value
     });
   }
 
   render() {
-
     return(
       <div className="container">
-        <form className="form-horizontal page-canvas" method="post">
+        <form className="form-horizontal page-canvas">
           <div className="signin-wrapper form logbox">
             <div className="form-group">
               <div className="col-md-12">
