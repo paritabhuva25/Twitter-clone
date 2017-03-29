@@ -3,8 +3,13 @@ const path = require('path');
 const multer = require('multer');
 const DB = require('../helpers/db');
 const router = express.Router();
+let multiparty = require('multiparty');
+let fs = require('fs');
 
 const upload = multer({ dest: path.resolve(__dirname, '../public/images/') });
+
+
+
 router.get('/followers', (req, res) => {
   const session = req.session;
   let query;
@@ -62,9 +67,9 @@ router.get('/followers', (req, res) => {
 
 router.post('/login', (req, res, next) => {
 
-  const password = req.body.userdata.password;
+  const password = req.body.data.password;
   const session = req.session;
-  const email = req.body.userdata.email;
+  const email = req.body.data.email;
   let query;
   query = DB.builder()
   .select()
@@ -86,32 +91,31 @@ router.post('/login', (req, res, next) => {
       DB.executeQuery(query, (err, results1) => {
         if (err) {
           next(err);
+          res.status(500).send({ error: "internal server error" });
           return;
         }
         if (results1.rowCount) {
           session.user_id = results1.rows[0].user_id;
+          let data = {
+          userId: session.user_id
         }
-      let data = {
-        userId: session.user_id,
-      }
-     res.end(JSON.stringify(data));
-     //res.cookie("cookie" ,"value").send('Cookie is set');
-   });
-  }
+          res.status(201).send((data));
+        }
+      });
+    }
+  });
 });
-});
-
 router.get('/', (req, res) => {
   res.render('index');
 });
 
 
 router.post('/register', upload.single('profile'), (req, res, next) => {
-  const username = req.body.userdata.username;
-  const email = req.body.userdata.email;
-  const mobilenumber = req.body.userdata.mobilenumber;
-  const password = req.body.userdata.password;
-  const image = req.body.userdata.profile;
+  const username = req.body.data.username;
+  const email = req.body.data.email;
+  const mobilenumber = req.body.data.mobilenumber;
+  const password = req.body.data.password;
+  const image = req.body.data.profile;
 
     const query1 = DB.builder()
     .insert()
@@ -126,63 +130,41 @@ router.post('/register', upload.single('profile'), (req, res, next) => {
     DB.executeQuery(query1, (error , data) => {
       if (error) {
         next(error);
+        res.status(500).send({ error: "internal server error" });
         return;
       }
-      console.log("====>",data);
-      let object={
-          data: data.rows
-      }
-      res.end( JSON.stringify(object));
+      res.status(201).send({ success: "added successfuly ..." });
     });
 });
 
 router.post('/tweet', upload.single('imagetweet'), (req, res, next) => {
-  // console.log(req);
-  // return false;
-  const userId = req.body.data.data.results[0].user_id;
-  const tweet = req.body.data.tweet;
 
-  // req.check('tweet', 'Tweet is required').notEmpty();
-  // var errors = req.validationErrors();
-  // console.log(errors);
-  if (tweet == "" || tweet == null) {
-   let object={
-        "status" : "0",
-        "userId" : userId,
-        "error" : "Please Enter Tweet",
-      }
-    console.log(object);
-    // return false;
-    res.send(JSON.stringify(object));
-    return;
-   }
+  const userId = req.body.userId;
+  const tweet = req.body.tweet;
+  let photo = '';
+  if (req.file) {
+    photo = req.file.data.imagetweet;
+  } else {
+    photo = '';
+  }
+  const query = DB.builder()
+  .insert()
+  .into('tweet')
+  .set('tweet', tweet)
+  .set('userid', userId)
+  .set('imagetweet', photo)
+  .toParam();
 
-    let photo = '';
-    if (req.file) {
-      photo = req.file.data.imagetweet;
-    } else {
-      photo = '';
+  DB.executeQuery(query, (error ,data) => {
+    if (error) {
+      next(error);
+      return;
     }
-    const query = DB.builder()
-    .insert()
-    .into('tweet')
-    .set('tweet', tweet)
-    .set('userid', userId)
-    .set('imagetweet', photo)
-    .toParam();
-
-    DB.executeQuery(query, (error ,data) => {
-      if (error) {
-
-        next(error);
-        return;
-      }
-      let object={
-        "userId" : userId
-      }
-      res.send(JSON.stringify(object));
-    });
-
+    let object={
+      "userId" : userId
+    }
+  res.status(201).send(object);
+  });
 });
 
 router.get('/deletetweet/:id', (req, res, next) => {
@@ -207,68 +189,10 @@ router.get('/logout', (req, res) => {
     res.end();
   });
 });
-router.get('/profileuser/:id', (req, res, next) => {
-  const profileid = req.params.id;
-  let query;
-      query = DB.builder()
-      .select()
-      .from('users')
-      .where('user_id = ?', profileid)
-      .toParam();
-      DB.executeQuery(query, (error, profile) => {
-        if (error) {
-          next(error);
-          return;
-        }
-        query = DB.builder()
-          .select()
-          .field('tweet')
-          .field('time')
-          .field('username')
-          .field('image')
-          .field('imagetweet')
-          .field('user_id')
-          .field('id')
-          .from('tweet', 't')
-          .join(DB.builder()
-          .select()
-          .from('users'), 'u', 't.userid = u.user_id')
-          .where('user_id = ?', profileid)
-          .order('time', false)
-          .toParam();
-          DB.executeQuery(query, (errorusers, tweets) => {
-            if (errorusers) {
-              next(errorusers);
-              return;
-            }
-            query = DB.builder()
-            .select()
-            .from('follower')
-            .where('login_user_id = ?', profileid)
-            .toParam();
-            DB.executeQuery(query, (errorusers, c) => {
-              if (errorusers) {
-                next(errorusers);
-                return;
-              }
-
-              let object= {
-               profile: profile.rows[0],
-                count: c.rows.length,
-                tweets: tweets.rows,
-              }
-
-               res.end( JSON.stringify(object));
-
-            });
-          });
-      });
-});
 
 router.get('/user/:Id', (req, res, next) => {
   userId = req.params.Id;
   const session = req.session;
-  console.log("====",userId)
   let query;
   if (userId) {
     query = DB.builder(
@@ -340,7 +264,7 @@ router.get('/user/:Id', (req, res, next) => {
               results: results.rows,
               tweets: tweets.rows,
             }
-            res.end( JSON.stringify(object));
+            res.status(201).send(object);
           });
         });
       });
@@ -418,9 +342,7 @@ router.get('/profile/:Id', (req, res, next) => {
               users: users.rows,
               results: results.rows,
             }
-
-            res.end( JSON.stringify(object));
-
+           res.status(201).send(object);
           });
         });
       });
@@ -449,30 +371,44 @@ router.get('/profilepictureupload', (req, res, next) => {
 });
 
 router.post('/follower', (req, res, next) => {
-  const id = req.body.followerId;
-  const userId = req.body.data.data.results[0].user_id;
+  const follower_id = req.body.followerId;
+  const login_user_id = req.body.data;
   const query = DB.builder()
   .insert()
   .into('follower')
-  .set('login_user_id', userId)
-  .set('follower_id', id)
+  .set('login_user_id', login_user_id)
+  .set('follower_id', follower_id)
   .toParam();
   DB.executeQuery(query, (error) => {
     if (error) {
       next(error);
       return;
     }
-    let object={
-        "userId" : userId
+
+    const query1 = DB.builder()
+      .select()
+      .from('follower')
+      .order("id", false)
+      .limit(1)
+      .toParam();
+    DB.executeQuery(query1, (error, results) => {
+      if (error) {
+        next(error);
+        return;
       }
-      res.send(JSON.stringify(object));
+
+    let object={
+        "userId" : login_user_id,
+        "lastid" : results.rows[0].id,
+      }
+      res.status(201).send((object));
+    });
   });
 });
 
 router.post('/unfollow', (req, res, next) => {
   const id = req.body.followerId;
-  console.log("======",id);
-  const userId = req.body.data.data.results[0].user_id;
+  const userId = req.body.data;
   const query = DB.builder()
   .delete()
   .from('follower')
@@ -487,32 +423,64 @@ router.post('/unfollow', (req, res, next) => {
    let object={
         "userId" : userId
       }
-      res.send(JSON.stringify(object));
+      res.status(201).send(object);
   });
 });
 
-router.post('/profilepictureupload', upload.single('thumbnail'), (req, res, next) => {
-  const session = req.session;
-  let photo = '';
-  if (req.file) {
-    photo = req.file.filename;
-  } else {
-    photo = '';
-  }
-  const query = DB.builder()
-  .update()
-  .table('users')
-  .set('image', photo)
-  .where('user_id = ?', session.user_id)
-  .toParam();
-  DB.executeQuery(query, (error) => {
-    if (error) {
-      next(error);
-      return;
-    }
+router.post('/profilepictureupload', (req, res, next) => {
 
-    res.redirect('/profilechange');
-  });
+  // console.log("+++++++++",req.file);
+
+  // const userId = req.body.userdata.results[0].user_id;
+  // const originalFilename =
+
+  // let photo = '';
+  // if (req.body) {
+  //   photo = req.body.file.name;
+  // } else {
+  //   photo = '';
+  // }
+  // const query = DB.builder()
+  // .update()
+  // .table('users')
+  // .set('image', photo)
+  // .where('user_id = ?',userId)
+  // .toParam();
+  // DB.executeQuery(query, (error) => {
+  //   if (error) {
+  //     next(error);
+  //     return;
+  //   }
+
+  //   res.end();
+  // });
+});
+
+router.post('/upload', (req, res, next) => {
+
+
+    let form = new multiparty.Form();
+    form.parse(req, (err, fields, files) => {
+      console.log(">>>>",  files.imageFile[0]);
+      // let tempPath ='/Users/parita/Twittwe-clone/public/images';
+      // let originalFilename = 'test';
+      let {path: tempPath, originalFilename} = files.imageFile[0];
+      let newPath = '/Users/parita/Twittwe-clone/public/images/'+ originalFilename;
+       console.log("image:",tempPath);
+      let copyToPath = "/Users/parita/Twittwe-clone/public/images" + originalFilename;
+      console.log("copyPath:", copyToPath)
+      fs.readFile(tempPath, (err, data) => {
+        // make copy of image to new location
+        fs.writeFile(newPath, data, (err) => {
+          // delete temp image
+          fs.unlink(tempPath, () => {
+            console.log("File uploaded to: " + newPath)
+            res.send("File uploaded to: " + newPath);
+          });
+        });
+      });
+    })
+
 });
 
 router.post('/editprofile', (req, res, next) => {

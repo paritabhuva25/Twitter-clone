@@ -9,6 +9,8 @@ import Login from './Login.js'
 import welcome from './welcome.js'
 import Profile from './profile.js'
 import Followers from './followers.js'
+import Editprofile from './Editprofile.js'
+
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App1}>
@@ -23,6 +25,7 @@ ReactDOM.render(
       <Route path="/follow" component={welcome}/>
       <Route path="/unfollow" component={Profile}/>
       <Route path="/followers/:Id" component={Followers}/>
+      <Route path="/editprofile/:Id" component={Editprofile}/>
     </Route>
   </Router>,
 document.getElementById('root'))
