@@ -107,18 +107,18 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/register', upload.single('profile'), (req, res, next) => {
+  console.log(req.body);
   const username = req.body.data.username;
   const email = req.body.data.email;
   const mobilenumber = req.body.data.mobilenumber;
   const password = req.body.data.password;
-  const image = req.body.data.profile;
 
     const query1 = DB.builder()
     .insert()
     .into('users')
     .set('username', username)
     .set('email', email)
-    .set('image', image)
+    .set('image', "null")
     .set('mobilenumber', mobilenumber)
     .set('password', password)
     .toParam();
@@ -129,7 +129,26 @@ router.post('/register', upload.single('profile'), (req, res, next) => {
         res.status(500).send({ error: "internal server error" });
         return;
       }
-      res.status(201).send({ success: "added successfuly ..." });
+      const query1 = DB.builder()
+      .select()
+      .from('users')
+      .order("user_id", false)
+      .limit(1)
+      .toParam();
+    DB.executeQuery(query1, (error, results) => {
+      if (error) {
+        next(error);
+        return;
+      }
+      let object={
+        userId : results.rows[0].user_id
+      }
+      console.log("++++++",results)
+      console.log("========",object)
+      res.status(201).send(object);
+    });
+
+
     });
 });
 
@@ -159,6 +178,7 @@ router.post('/tweet', upload.single('imagetweet'), (req, res, next) => {
     let object={
       "userId" : userId
     }
+    console.log(object);
   res.status(201).send(object);
   });
 });
@@ -402,7 +422,7 @@ router.post('/follower', (req, res, next) => {
   });
 });
 
-router.post('/unfollow', (req, res, next) => {
+router.post('/unfollow/:id', (req, res, next) => {
   const id = req.body.followerId;
   const userId = req.body.data;
   const query = DB.builder()
@@ -452,60 +472,80 @@ router.post('/profilepictureupload', (req, res, next) => {
   // });
 });
 
-router.post('/upload', (req, res, next) => {
+router.post('/upload/:Id', (req, res, next) => {
+  // console.log("----",req);
+  console.log("header is", req.headers.referer);
+  var url = req.headers.referer;
+  var a = url.split("/");
+  // console.log(a[4]);
+  let form = new multiparty.Form();
+ let userId = a[4];
+  let photo = '';
+  form.parse(req, (err, fields, files) => {
+    console.log("=======>",files)
+    let {path: tempPath, originalFilename} = files.imageFile[0];
+    let newPath = '/Users/parita/Twittwe-clone/public/images/'+ originalFilename;
+    console.log("image:",originalFilename);
+    let copyToPath = "/Users/parita/Twittwe-clone/public/images" + originalFilename;
+    console.log("copyPath:", copyToPath)
+    fs.readFile(tempPath, (err, data) => {
+      // make copy of image to new location
+      fs.writeFile(newPath, data, (err) => {
+        // delete temp image
+        fs.unlink(tempPath, () => {
+          console.log("File uploaded to: " + newPath)
+          res.send("File uploaded to: " + newPath);
+          if (req) {
+            photo = originalFilename;
+          } else {
+            photo = '';
+          }
+          const query = DB.builder()
+          .update()
+          .table('users')
+          .set('image', photo)
+          .where('user_id = ?',userId)
+          .toParam();
+          DB.executeQuery(query, (error) => {
+            if (error) {
+              next(error);
+              return;
+            }
 
-
-    let form = new multiparty.Form();
-    form.parse(req, (err, fields, files) => {
-      console.log(">>>>",  files.imageFile[0]);
-      // let tempPath ='/Users/parita/Twittwe-clone/public/images';
-      // let originalFilename = 'test';
-      let {path: tempPath, originalFilename} = files.imageFile[0];
-      let newPath = '/Users/parita/Twittwe-clone/public/images/'+ originalFilename;
-       console.log("image:",tempPath);
-      let copyToPath = "/Users/parita/Twittwe-clone/public/images" + originalFilename;
-      console.log("copyPath:", copyToPath)
-      fs.readFile(tempPath, (err, data) => {
-        // make copy of image to new location
-        fs.writeFile(newPath, data, (err) => {
-          // delete temp image
-          fs.unlink(tempPath, () => {
-            console.log("File uploaded to: " + newPath)
-            res.send("File uploaded to: " + newPath);
+            res.end();
           });
         });
       });
-    })
-
+    });
+  })
 });
-
-router.post('/editprofile', (req, res, next) => {
-  const session = req.session;
-  const username = req.body.username;
-  const email = req.body.email;
-  const mobileno = req.body.mobileno;
-  let password = '';
-  if (req.body.confirmpassword !== '') {
-    password = req.body.confirmpassword;
-  } else {
-    password = req.body.password;
-  }
-  const query = DB.builder()
-  .update()
-  .table('users')
-  .set('username', username)
-  .set('email', email)
-  .set('mobilenumber', mobileno)
-  .set('password', password)
-  .where('user_id = ?', session.user_id)
-  .toParam();
-  DB.executeQuery(query, (error) => {
-    if (error) {
-      next(error);
-      return;
-    }
-    res.redirect('/welcome');
-  });
-});
+// router.post('/editprofile', (req, res, next) => {
+//   const session = req.session;
+//   const username = req.body.username;
+//   const email = req.body.email;
+//   const mobileno = req.body.mobileno;
+//   let password = '';
+//   if (req.body.confirmpassword !== '') {
+//     password = req.body.confirmpassword;
+//   } else {
+//     password = req.body.password;
+//   }
+//   const query = DB.builder()
+//   .update()
+//   .table('users')
+//   .set('username', username)
+//   .set('email', email)
+//   .set('mobilenumber', mobileno)
+//   .set('password', password)
+//   .where('user_id = ?', session.user_id)
+//   .toParam();
+//   DB.executeQuery(query, (error) => {
+//     if (error) {
+//       next(error);
+//       return;
+//     }
+//     res.redirect('/welcome');
+//   });
+// });
 
 module.exports = router;

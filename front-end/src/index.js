@@ -16,6 +16,7 @@ ReactDOM.render(
     <Route path="/" component={App1}>
       <Route path="/Register" component={Register}/>
       <Route path="/Login" component={Login}/>
+      <Route path="/upload/:Id" component={Editprofile}/>
     </Route>
     <Route path="/" component={App}>
       <Route path="/user/:Id" component={welcome}/>
@@ -25,7 +26,7 @@ ReactDOM.render(
       <Route path="/follow" component={welcome}/>
       <Route path="/unfollow" component={Profile}/>
       <Route path="/followers/:Id" component={Followers}/>
-      <Route path="/editprofile/:Id" component={Editprofile}/>
+
     </Route>
   </Router>,
 document.getElementById('root'))

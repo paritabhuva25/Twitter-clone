@@ -199,7 +199,8 @@ onfollowerCLick(e){
 
     let username = '' , profileimage = '';
     if(this.state.data.results){
-      profileimage = `http://localhost:8000/images/49aa81c0ce79671b5534261a0b3708c`
+      profileimage = `http://localhost:8000/images/${this.state.data.results[0].image}`
+      console.log("======",this.state.data.results[0].image)
       username = this.state.data.results[0].username;
     }
 

@@ -11,6 +11,7 @@ class Register extends Component{
   constructor(props) {
     super(props);
     this.state={
+      userId : '',
       username :'',
       email :'',
       mobilenumber:'',
@@ -70,12 +71,12 @@ class Register extends Component{
     })
 
     .then(function (response) {
+      console.log(response.data.userId);
 
+      browserHistory.push('/upload/'+response.data.userId);
     })
-    .catch(function (error) {
 
-    });
-      browserHistory.push('/login');
+
       e.preventDefault(e);
     }
   }

@@ -61,6 +61,7 @@ app.use('/welcome', routes);
 app.use('/profilechange', routes);
 app.use('/profilepictureupload', routes);
 app.use('/editprofile', routes);
+app.use('/upload', routes);
 // Catch 404 errors
 // Forwarded to the error handlers
 app.use((req, res, next) => {
