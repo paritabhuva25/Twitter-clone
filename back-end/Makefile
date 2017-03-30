@@ -7,6 +7,9 @@ SHELL := /bin/bash
 JS_SRC = $(shell find . -type f -name '*.js' ! -path './node_modules/*')
 JSON_SRC = $(shell find . -type f -name '*.json' ! -path './node_modules/*')
 
+JS_SRC = $(shell find . -type f -name '*.js' ! -path './node_modules/*' ! -path './front-end/node_modules/*')
+JSON_SRC = $(shell find . -type f -name '*.json' ! -path './node_modules/*' ! -path './front-end/node_modules/*')
+
 .PHONY: lint test
 
 lint:

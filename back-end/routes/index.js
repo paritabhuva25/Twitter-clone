@@ -422,7 +422,7 @@ router.post('/follower', (req, res, next) => {
   });
 });
 
-router.post('/unfollow/:id', (req, res, next) => {
+router.post('/unfollow', (req, res, next) => {
   const id = req.body.followerId;
   const userId = req.body.data;
   const query = DB.builder()
@@ -493,8 +493,8 @@ router.post('/upload/:Id', (req, res, next) => {
       fs.writeFile(newPath, data, (err) => {
         // delete temp image
         fs.unlink(tempPath, () => {
-          console.log("File uploaded to: " + newPath)
-          res.send("File uploaded to: " + newPath);
+
+          res.send(`File uploaded to: ${newPath}`);
           if (req) {
             photo = originalFilename;
           } else {
@@ -504,7 +504,7 @@ router.post('/upload/:Id', (req, res, next) => {
           .update()
           .table('users')
           .set('image', photo)
-          .where('user_id = ?',userId)
+          .where('user_id = ?', userId)
           .toParam();
           DB.executeQuery(query, (error) => {
             if (error) {
@@ -517,7 +517,7 @@ router.post('/upload/:Id', (req, res, next) => {
         });
       });
     });
-  })
+  });
 });
 // router.post('/editprofile', (req, res, next) => {
 //   const session = req.session;
@@ -547,5 +547,4 @@ router.post('/upload/:Id', (req, res, next) => {
 //     res.redirect('/welcome');
 //   });
 // });
-
 module.exports = router;
