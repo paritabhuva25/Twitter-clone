@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Navlogin from './navlogin.js'
-//import Register from './Register.js'
+import Navlogin from './navlogin';
 
 class App1 extends Component {
   render() {

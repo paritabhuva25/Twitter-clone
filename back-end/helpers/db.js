@@ -20,7 +20,6 @@ const config = {
   min: 1, // set min pool size to 1
   idleTimeoutMillis: 1000, // how long a client is allowed to remain idle before being closed
 };
-console.log(config)
 const pool = new PoolCon(config);
 
 // Export

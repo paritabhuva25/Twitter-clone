@@ -2,19 +2,18 @@ import React, { Component } from 'react';
 import './welcome.css';
 import cookie from 'react-cookie';
 import axios from 'axios';
-import {browserHistory} from 'react-router';
-import { HelpBlock } from 'react-bootstrap';
+import { browserHistory } from 'react-router';
+import { HelpBlock }  from 'react';
 
-class welcome extends Component{
-  constructor(props) {
+class welcome extends Component {
+  constructor (props) {
     super(props);
-    this.state=
-    {
-      tweet : '',
-      imagetweet : '',
-      data:'',
-      tweetrequired:'',
-    }
+    this.state = {
+      tweet: '',
+      imagetweet: '',
+      data: '',
+      tweetrequired: '',
+    };
     this.onFieldChange = this.onFieldChange.bind(this);
     this.onProfileClick = this.onProfileClick.bind(this);
     this.onsubmittweet = this.onsubmittweet.bind(this);
@@ -22,15 +21,15 @@ class welcome extends Component{
     this.onfollowerCLick = this.onfollowerCLick.bind(this);
   }
 
-  componentWillMount() {
-    if(cookie.load(this.props.params.Id)) {
-      let userId = cookie.load(this.props.params.Id);
-      axios.get('http://localhost:8000/user/' + userId)
-      .then(res => {
-        const data= res.data;
+  componentWillMount () {
+    if (cookie.load(this.props.params.Id)) {
+      const userId = cookie.load(this.props.params.Id);
+      axios.get(`'http://localhost:8000/user/' ${userId}`)
+      .then((res) => {
+        const data = res.data;
         this.setState({
           data: data,
-        })
+        });
       });
     } else {
       browserHistory.push('/login');
@@ -38,80 +37,96 @@ class welcome extends Component{
   }
   onfollow(id) {
     axios.post('http://localhost:8000/follower', {
-      data : this.props.params.Id,
+      data: this.props.params.Id,
       followerId: id,
     })
-    .then(function (response) {
+    .then((response) => {
       if (response.data.userId) {
         location.reload();
-        browserHistory.push("/user/" + response.data.userId)
+        browserHistory.push(`'/user/' ${response.data.userId}`);
       }
-    })
-    .catch(function (error) {
-
     });
-
-
   }
   onProfileClick(e) {
-    let userId = this.props.params.Id
-      if(userId)
-        browserHistory.push("/profile/" +userId)
-      else
-        browserHistory.push("/login")
+    const userId = this.props.params.Id;
+    if (userId) {
+      browserHistory.push(`'/profile/' ${userId}`);
+    } else {
+      browserHistory.push('/login');
+    }
     e.preventDefault(e);
   }
-onfollowerCLick(e){
-    let userId = this.props.params.Id
-      if(userId)
-        browserHistory.push("/followers/" +userId)
-      else
-        browserHistory.push("/login")
+  onfollowerCLick(e) {
+    const userId = this.props.params.Id;
+    if (userId) {
+      browserHistory.push(`/followers/ ${userId}`);
+    } else {
+      browserHistory.push('/login');
+    }
     e.preventDefault(e);
   }
-  onsubmittweet(e){
+  onsubmittweet(e) {
     e.preventDefault(e);
     let status = true;
-    if(this.state.tweet === ''){
-      this.setState({tweetrequired: '*Required'});
+    if (this.state.tweet === '') {
+      this.setState({ tweetrequired: '*Required' });
       status = false;
-    }
-    else if(status)
-    {
+    } else if (status) {
       axios.post('http://localhost:8000/tweet', {
-        tweet :this.state.tweet,
-        imagetweet :this.state.imagetweet,
-        userId :this.props.params.Id,
+        tweet: this.state.tweet,
+        imagetweet: this.state.imagetweet,
+        userId: this.props.params.Id,
       })
-      .then(function (response) {
+      .then((response) => {
         location.reload();
-         browserHistory.push("/user/" + response.data.userId)
-      })
-      .catch(function (error) {
-
+        browserHistory.push(`"/user/" ${response.data.userId}`);
       });
-
     }
   }
 
-  onFieldChange(event){
+  onFieldChange(event) {
     this.setState({
-      [ event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   }
-
   render() {
-
     var tweet = [];
-     if(this.state.data.tweets) {
-
-      for (var i = 0; i < this.state.data.tweets.length ; i++) {
-        if(this.state.data.tweets[i].imagetweet) {
-        let image = '', imagetweet='';
-          image = `http://localhost:8000/images/${this.state.data.tweets[i].image}`
-          imagetweet = `http://localhost:8000/images/${this.state.data.tweets[i].imagetweet}`;
-          tweet.push(
-            <div key={i} className="media block-update-card center" style={{margin: "10px auto",width: "100%",}}>
+      if (this.state.data.tweets) {
+        for (var i = 0; i < this.state.data.tweets.length; i += 1) {
+          if (this.state.data.tweets[i].imagetweet) {
+            let image = '';
+            let imagetweet = '';
+            image = `'http://localhost:8000/images/' ${this.state.data.tweets[i].image}`;
+            imagetweet = `'http://localhost:8000/images/' ${this.state.data.tweets[i].imagetweet}`;
+            tweet.push(
+              <div key = {i} className="media block-update-card center" style = {{ margin: "10px auto", width: "100%" }}>
+                <p href="#" className="pull-left">
+                  <img src={image}
+                  alt="sss"
+                  height="50px"
+                  width="50px"
+                  className="img-circle media-object"/>
+                </p>
+                <div className="pull-right" style={{ margin:" 5px 5px" }}>
+                  {this.state.data.tweets[i].time}
+                </div>
+                <div key={i} className="media-body update-card-body" >
+                  <p href="/profile/" className="media-heading"> {this.state.data.tweets[i].username}</p>
+                  <div key={i}> {this.state.data.tweets[i].tweet} </div>
+                  <img
+                    src={imagetweet}
+                    alt="aaa"
+                    height="250px"
+                    width="250px"
+                    className="media-object"/>
+                  <p></p>
+                </div>
+              </div>
+            );
+          } else {
+            let image = '';
+            image = `http://localhost:8000/images/${this.state.data.tweets[i].image}`;
+            tweet.push(<div key={i} className="media block-update-card center" style = {{ margin: "10px auto", width: "100%", height:"100px" }}>
               <p href="#" className="pull-left">
                 <img src={image}
                 alt="sss"
@@ -119,93 +134,63 @@ onfollowerCLick(e){
                 width="50px"
                 className="img-circle media-object"/>
               </p>
-              <div className="pull-right"  style={{margin:" 5px 5px",}}>
-                {this.state.data.tweets[i].time}
-              </div>
-              <div key={i} className="media-body update-card-body" >
-                <p href="/profile/" className="media-heading"> {this.state.data.tweets[i].username}</p>
-                <div  key={i}> {this.state.data.tweets[i].tweet} </div>
-                <img
-                  src={imagetweet}
-                  alt="aaa"
-                  height="250px"
-                  width="250px"
-                  className="media-object"/>
+              <div className="pull-right" style = {{ margin: " 5px 5px" }}>
+                  {this.state.data.tweets[i].time}
+                </div>
+              <div key={i} className="media-body update-card-body">
+                <a href="/profile/" className="media-heading">{this.state.data.tweets[i].username}</a>
+                <div key={i}> {this.state.data.tweets[i].tweet} </div>
                 <p></p>
               </div>
             </div>
-          );
-        } else {
-          let image = '';
-          image = `http://localhost:8000/images/${this.state.data.tweets[i].image}`
-         tweet.push( <div key={i} className="media block-update-card center" style={{margin: "10px auto",width: "100%",height:"100px"}}>
-            <p href="#" className="pull-left">
-              <img src={image}
-              alt="sss"
-              height="50px"
-              width="50px"
-              className="img-circle media-object"/>
-            </p>
-            <div className="pull-right"  style={{margin:" 5px 5px",}}>
-                {this.state.data.tweets[i].time}
-              </div>
-            <div key={i} className="media-body update-card-body">
-              <a href="/profile/" className="media-heading">{this.state.data.tweets[i].username}</a>
-              <div  key={i}> {this.state.data.tweets[i].tweet} </div>
-              <p></p>
-            </div>
-          </div>
-          );
+            );
+          }
         }
       }
-    }
 
-    var follower = [];
+    const follower = [];
 
-    if(this.state.data.follow) {
-
-       for ( i = 0; i < this.state.data.follow.length ; i++) {
-
-        if(this.state.data.follow) {
+    if (this.state.data.follow) {
+      for (let i = 0; i < this.state.data.follow.length; i += 1) {
+        if (this.state.data.follow) {
           let image = '';
-          image = `http://localhost:8000/images/${this.state.data.follow[i].image}`
-          let a = this.state.data.follow[i].user_id;
+          image = `http://localhost:8000/images/${this.state.data.follow[i].image}`;
+          const a = this.state.data.follow[i].user_id;
           follower.push(
-             <div key={i} className="media block-update-card right" style={{height:"250px",width: "60%",}}>
-                  <img name="profile"
-                  src={image}
-                  alt="www"
-                  height="150px"
-                  width="150px"
-                  className="img-circle center-block"/>
-                  <h5 className="h5">{this.state.data.follow[i].username}</h5>
-                  <form>
-                    <input
-                      value={a}
-                      type="hidden"
-                      name="followerId"/>
-                    <input
-                      onClick={this.onfollow.bind(this, a)}
-                      id={a}
-                      type="submit"
-                      value="Follow"
-                      className="btn-sm btn-info waves-effect waves-light center-block"/>
-                  </form>
-                </div>
+             <div key={i} className="media block-update-card right" style = {{ height:"250px", width: "60%" }}>
+                <img name="profile"
+                src={image}
+                alt="www"
+                height="150px"
+                width="150px"
+                className="img-circle center-block"/>
+                <h5 className="h5">{this.state.data.follow[i].username}</h5>
+                <form>
+                  <input
+                    value={a}
+                    type="hidden"
+                    name="followerId"/>
+                  <input
+                    onClick={this.onfollow.bind(this, a)}
+                    id={a}
+                    type="submit"
+                    value="Follow"
+                    className="btn-sm btn-info waves-effect waves-light center-block"/>
+                </form>
+              </div>
           );
         }
       }
     }
 
-    let username = '' , profileimage = '';
-    if(this.state.data.results){
-      profileimage = `http://localhost:8000/images/${this.state.data.results[0].image}`
-      console.log("======",this.state.data.results[0].image)
+    let username = '';
+    let profileimage = '';
+    if (this.state.data.results) {
+      profileimage = `http://localhost:8000/images/${this.state.data.results[0].image}`;
       username = this.state.data.results[0].username;
     }
 
-    return(
-
+    return (
       <div className="container" >
         <div className="col-sm-3">
           <div className="page-canvas">
@@ -332,5 +317,3 @@ onfollowerCLick(e){
   }
 }
 export default welcome;
-
-

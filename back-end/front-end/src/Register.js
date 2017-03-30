@@ -171,23 +171,6 @@ class Register extends Component{
           </div>
           <div className="form-group">
             <div className="col-sm-12">
-              <h5>choose your profile picture</h5>
-            </div>
-          </div>
-          <div className="form-group">
-            <div className="col-sm-12">
-              <input
-              value={this.state.profile}
-              onChange={this.onFieldChange}
-              type="file"
-              name="profile"
-              required="required"/>
-              <HelpBlock className="errFontStyle"> {this.state.profilerequirederrors} </HelpBlock>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <div className="col-sm-12">
               <input className="form-control button btn-info" type="button" onClick={this.handleSubmit} name="Submit" value="Sign In"/>
             </div>
           </div>

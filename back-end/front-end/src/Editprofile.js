@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import cookie from 'react-cookie';
-import {browserHistory} from 'react-router';
-import axios from 'axios';
+import { browserHistory } from 'react-router';
 import './Login.css';
 
 class Editprofile extends Component {
@@ -9,41 +7,38 @@ class Editprofile extends Component {
     super(props);
     this.state = {
       file: '',
-      imagePreviewUrl: ''
+      imagePreviewUrl: '',
     };
-    this._handleImageChange = this._handleImageChange.bind(this);
-    this._handleSubmit = this._handleSubmit.bind(this);
+    this.handleImageChange = this.handleImageChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.onskipClick = this.onskipClick.bind(this);
   }
 
-  _handleSubmit(e) {
-    // console.log(this.props.params.Id);
-    // return false;
+  handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state.file);
-    let imageFile = this.state.file;
+    const imageFile = this.state.file;
 
     return new Promise((resolve, reject) => {
-    let imageFormData = new FormData();
+      let imageFormData = new FormData();
 
-    imageFormData.append('imageFile', imageFile);
-    imageFormData.append('userId', this.props.params.Id);
-    var xhr = new XMLHttpRequest();
+      imageFormData.append('imageFile', imageFile);
+      imageFormData.append('userId', this.props.params.Id);
+      var xhr = new XMLHttpRequest();
 
-    xhr.open('post', 'http://localhost:8000/upload/'+this.props.params.Id , true);
-    console.log(this.state.file);
-    xhr.onload = function () {
-      if (this.status == 200) {
-        resolve(this.response);
-      }
-    };
-    xhr.send(imageFormData);
+      xhr.open('post', 'http://localhost:8000/upload/'+this.props.params.Id , true);
+      console.log(this.state.file);
+      xhr.onload = function () {
+        if (this.status == 200) {
+          resolve(this.response);
+        }
+      };
+      xhr.send(imageFormData);
 
-  });
+    });
   // TODO: do something with -> this.state.file
 }
 
-  _handleImageChange(e) {
+  handleImageChange(e) {
     e.preventDefault();
 
     let reader = new FileReader();
@@ -81,7 +76,7 @@ class Editprofile extends Component {
               <div className="form-group">
                 <div className="col-md-12">
                   <input
-                   type="file" onChange={this._handleImageChange} />
+                   type="file" onChange={this.handleImageChange} />
                 </div>
               </div>
               <div className="col-md-12">
@@ -95,7 +90,7 @@ class Editprofile extends Component {
                   <input
                   className="form-control button btn-info"
                   type="submit" name="Submit"
-                  onClick={this._handleSubmit}
+                  onClick={this.handleSubmit}
                   value="Upload Image"/>
                 </div>
               </div>
